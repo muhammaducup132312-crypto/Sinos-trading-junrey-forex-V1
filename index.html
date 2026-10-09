@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EdgeLog — Backtest Journal</title>
+<style>
+:root{--bg:#0a0d14;--panel:#111722;--panel2:#151d2a;--line:#253044;--text:#eef3fb;--muted:#92a0b5;--green:#42d6a0;--red:#ff6e7a;--blue:#80aaff;--amber:#f4c76b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% -10%,#17233a 0,transparent 45%),var(--bg);color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:10px 13px;color:var(--text);background:#1a2434}button:hover{filter:brightness(1.12)}button.primary{background:var(--green);color:#07130f;border-color:transparent;font-weight:750}button.danger{color:var(--red)}button.ghost{background:transparent}
+.shell{max-width:1400px;margin:auto;padding:24px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--green),#7da7ff);color:#07130f;display:grid;place-items:center;font-size:22px;font-weight:900}.brand h1{font-size:21px;margin:0;letter-spacing:-.5px}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}.tag{border:1px solid #275541;color:var(--green);padding:5px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:18px 0}.hero h2{font-size:28px;letter-spacing:-1px;margin:0 0 5px}.hero p{margin:0;color:var(--muted)}.layout{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:start}.panel{background:linear-gradient(180deg,rgba(21,29,42,.96),rgba(16,22,33,.96));border:1px solid var(--line);border-radius:17px;padding:18px;box-shadow:0 12px 36px #0002}.panel h3{font-size:15px;margin:0 0 15px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.55px}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:9px;background:#0c121c;color:var(--text);padding:10px 11px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--blue)}textarea{resize:vertical;min-height:70px}.hint{color:var(--muted);font-size:11px}.formbuttons{display:flex;gap:8px;margin-top:14px}.formbuttons button{flex:1}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.metric{background:#0d131d;border:1px solid var(--line);border-radius:13px;padding:15px}.metric .label{color:var(--muted);font-size:11px}.metric .value{font-size:24px;font-weight:800;letter-spacing:-.7px;margin-top:5px}.positive{color:var(--green)}.negative{color:var(--red)}.neutral{color:var(--text)}.sub{color:var(--muted);font-size:11px;margin-top:4px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 0 13px}.toolbar h3{margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters select{width:auto;min-width:120px;padding:8px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:790px}th,td{padding:11px 12px;border-bottom:1px solid #202a3a;text-align:left;white-space:nowrap}th{background:#0c121c;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.6px}td{font-size:12px}tr:last-child td{border-bottom:0}.pill{display:inline-block;padding:3px 7px;border-radius:6px;font-size:10px;font-weight:800}.pill.win{background:#12392d;color:var(--green)}.pill.loss{background:#3c2029;color:var(--red)}.pill.be{background:#35301e;color:var(--amber)}.empty{text-align:center;padding:36px 15px;color:var(--muted)}.bottomgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.barrow{display:grid;grid-template-columns:80px 1fr 52px;gap:10px;align-items:center;margin:12px 0;font-size:12px}.bar{height:8px;background:#222c3b;border-radius:99px;overflow:hidden}.bar span{height:100%;display:block;border-radius:99px;background:var(--green)}.bar span.lossbar{background:var(--red)}.note{font-size:12px;color:var(--muted);margin-top:12px}.footer{color:var(--muted);font-size:11px;text-align:center;padding:22px 0 4px}.smallbtn{padding:5px 8px;font-size:11px}.mobileonly{display:none}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.bottomgrid{grid-template-columns:1fr}.hero h2{font-size:24px}}
+@media(max-width:560px){.shell{padding:14px}.top{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions button{flex:1}.hero{align-items:flex-start;flex-direction:column}.metrics{gap:8px}.metric{padding:12px}.metric .value{font-size:21px}.formgrid{gap:9px}.panel{padding:14px}.brand h1{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand"><div class="logo">E</div><div><h1>EdgeLog <span style="color:var(--muted);font-weight:500">/ Backtest Lab</span></h1><p>Jurnal trading pribadi · data tersimpan di perangkat ini</p></div></div>
+    <div class="actions"><span class="tag">100-TRADE CHALLENGE</span><button id="exportBtn">Ekspor CSV</button><button id="backupBtn">Backup JSON</button><button id="importBtn">Impor backup</button><input id="importFile" type="file" accept=".json,application/json" hidden></div>
+  </header>
+  <section class="hero"><div><h2>Uji edge, bukan feeling.</h2><p>Catat setiap setup, ukur expectancy, pantau drawdown, dan evaluasi hasil dengan disiplin.</p></div><div class="tag" id="progressTag">0 / 100 trade tercatat</div></section>
+  <div class="layout">
+    <aside class="panel">
+      <h3 id="formTitle">＋ Catat trade baru</h3>
+      <form id="tradeForm">
+        <div class="formgrid">
+          <div class="field"><label>Tanggal</label><input id="date" type="date" required></div>
+          <div class="field"><label>Instrumen</label><select id="symbol"><option>XAUUSD</option><option>EURUSD</option><option>GBPUSD</option><option>BTCUSD</option><option>Other</option></select></div>
+          <div class="field"><label>Hasil</label><select id="result"><option value="win">TP / Win</option><option value="loss">SL / Loss</option><option value="be">Break-even</option></select></div>
+          <div class="field"><label>Arah</label><select id="direction"><option>BUY</option><option>SELL</option></select></div>
+          <div class="field"><label>Risk (R)</label><input id="riskR" type="number" min="0.01" step="0.01" value="1" required></div>
+          <div class="field"><label>RR aktual</label><select id="rr"><option value="1">1:1</option><option value="1.5">1:1.5</option><option value="2" selected>1:2</option><option value="3">1:3</option><option value="5">1:5</option><option value="8">1:8</option><option value="custom">Custom</option></select></div>
+          <div class="field" id="customWrap" style="display:none"><label>RR custom</label><input id="customRR" type="number" min="0.01" step="0.01" placeholder="mis. 2.5"></div>
+          <div class="field"><label>Biaya (R)</label><input id="costR" type="number" min="0" step="0.01" value="0" title="Total spread/komisi/slippage dalam satuan R"></div>
+          <div class="field"><label>Setup</label><select id="setup"><option>ICT / FVG</option><option>Liquidity sweep</option><option>MSS / CHoCH</option><option>SND + SNR</option><option>Parallel channel</option><option>Breakout / retest</option><option>Other</option></select></div>
+          <div class="field"><label>Sesi</label><select id="session"><option>Asia</option><option>London</option><option>New York</option><option>Overlap</option><option>Other</option></select></div>
+          <div class="field full"><label>Catatan / alasan entry</label><textarea id="notes" placeholder="Contoh: sweep liquidity, MSS M5, entry FVG, SL di atas swing..."></textarea></div>
+        </div>
+        <p class="hint">RR yang dicatat adalah RR terealisasi. Untuk loss, aplikasi otomatis menghitung -1R × risk, lalu mengurangi biaya.</p>
+        <div class="formbuttons"><button class="primary" type="submit" id="saveBtn">Simpan trade</button><button type="button" id="cancelEdit" class="ghost" style="display:none">Batal edit</button></div>
+      </form>
+    </aside>
+    <main>
+      <section class="metrics">
+        <div class="metric"><div class="label">NET PROFIT</div><div class="value neutral" id="net">0.00R</div><div class="sub" id="netMoney">Unit risiko bersih</div></div>
+        <div class="metric"><div class="label">WIN RATE</div><div class="value" id="winrate">0.0%</div><div class="sub" id="wl">0W · 0L · 0BE</div></div>
+        <div class="metric"><div class="label">EXPECTANCY</div><div class="value" id="expectancy">0.00R</div><div class="sub">Net R ÷ seluruh trade</div></div>
+        <div class="metric"><div class="label">MAX DRAWDOWN</div><div class="value negative" id="drawdown">0.00R</div><div class="sub">Peak-to-trough kumulatif</div></div>
+      </section>
+      <section class="panel">
+        <div class="toolbar"><h3>Riwayat trade</h3><div class="filters"><select id="filterResult"><option value="all">Semua hasil</option><option value="win">Win</option><option value="loss">Loss</option><option value="be">Break-even</option></select><select id="filterSymbol"><option value="all">Semua instrumen</option><option>XAUUSD</option><option>EURUSD</option><option>GBPUSD</option><option>BTCUSD</option><option>Other</option></select><button id="clearFilters" class="ghost">Reset filter</button></div></div>
+        <div class="tablewrap"><table><thead><tr><th>#</th><th>Tanggal</th><th>Instrumen</th><th>Setup / arah</th><th>Hasil</th><th>RR</th><th>Net (R)</th><th>Catatan</th><th>Aksi</th></tr></thead><tbody id="tradeRows"></tbody></table><div id="empty" class="empty">Belum ada trade. Catat trade pertama di panel kiri untuk mulai mengukur performa.</div></div>
+        <div class="note">Data disimpan secara lokal di browser ini (localStorage), tidak dikirim ke server. Ekspor backup secara berkala agar tidak hilang saat membersihkan data browser.</div>
+      </section>
+      <div class="bottomgrid">
+        <section class="panel"><h3>Komposisi hasil</h3><div class="barrow"><span>Win</span><div class="bar"><span id="winbar" style="width:0%"></span></div><b id="wincount">0</b></div><div class="barrow"><span>Loss</span><div class="bar"><span id="lossbar" class="lossbar" style="width:0%"></span></div><b id="losscount">0</b></div><div class="barrow"><span>Break-even</span><div class="bar"><span id="bebar" style="width:0%;background:var(--amber)"></span></div><b id="becount">0</b></div><p class="note">Win rate ditampilkan sebagai win ÷ (win + loss), BE tidak dihitung sebagai win atau loss.</p></section>
+        <section class="panel"><h3>Ringkasan kualitas sistem</h3><div class="barrow"><span>Avg win</span><div class="bar"><span id="avgwinbar" style="width:0%"></span></div><b id="avgwin">0.00R</b></div><div class="barrow"><span>Avg loss</span><div class="bar"><span id="avglossbar" class="lossbar" style="width:0%"></span></div><b id="avgloss">0.00R</b></div><div class="barrow"><span>Profit factor</span><div class="bar"><span id="pfbar" style="width:0%;background:var(--blue)"></span></div><b id="pf">—</b></div><p class="note" id="assessment">Tambahkan data untuk melihat ringkasan sistem.</p></section>
+      </div>
+    </main>
+  </div>
+  <div class="footer">EdgeLog Backtest Lab · Versi personal gratis · Bukan saran finansial</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const KEY='edgelog_trades_v1'; let trades=[]; let editId=null;
+try{trades=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(trades))trades=[]}catch(e){trades=[]}
+$('date').value=new Date().toISOString().slice(0,10);
+$('rr').addEventListener('change',()=>{$('customWrap').style.display=$('rr').value==='custom'?'flex':'none'});
+$('result').addEventListener('change',()=>{$('rr').disabled=$('result').value!=='win';$('customRR').disabled=$('result').value!=='win'});
+function persist(){localStorage.setItem(KEY,JSON.stringify(trades));render()}
+function calc(t){let risk=Number(t.riskR)||1,cost=Number(t.costR)||0;let gross=t.result==='win'?(Number(t.rr)||0)*risk:t.result==='loss'?-risk:0;return gross-cost}
+function fmt(n,d=2){return Number(n).toFixed(d)}
+function render(){
+ const sorted=[...trades].sort((a,b)=>a.date.localeCompare(b.date)||a.created-b.created);
+ const wins=sorted.filter(t=>t.result==='win'),losses=sorted.filter(t=>t.result==='loss'),bes=sorted.filter(t=>t.result==='be');
+ const net=sorted.reduce((s,t)=>s+calc(t),0),decisive=wins.length+losses.length,wr=decisive?wins.length/decisive*100:0;
+ const avgWin=wins.length?wins.reduce((s,t)=>s+calc(t),0)/wins.length:0,avgLoss=losses.length?-losses.reduce((s,t)=>s+calc(t),0)/losses.length:0;
+ const grossWin=sorted.reduce((s,t)=>s+Math.max(0,calc(t)),0),grossLoss=-sorted.reduce((s,t)=>s+Math.min(0,calc(t)),0),pf=grossLoss?grossWin/grossLoss:(grossWin?Infinity:0);
+ let cum=0,peak=0,dd=0; sorted.forEach(t=>{cum+=calc(t);peak=Math.max(peak,cum);dd=Math.max(dd,peak-cum)});
+ $('net').textContent=(net>0?'+':'')+fmt(net)+'R';$('net').className='value '+(net>0?'positive':net<0?'negative':'neutral');$('netMoney').textContent='Net hasil dalam satuan R';
+ $('winrate').textContent=fmt(wr,1)+'%';$('wl').textContent=`${wins.length}W · ${losses.length}L · ${bes.length}BE`;
+ $('expectancy').textContent=(sorted.length?(net/sorted.length):0).toFixed(2)+'R';$('drawdown').textContent=fmt(dd)+'R';
+ const total=sorted.length||1; [['winbar',wins.length],['lossbar',losses.length],['bebar',bes.length]].forEach(([id,n])=>$(id).style.width=(n/total*100)+'%');
+ $('wincount').textContent=wins.length;$('losscount').textContent=losses.length;$('becount').textContent=bes.length;
+ $('avgwin').textContent=fmt(avgWin)+'R';$('avgloss').textContent=fmt(avgLoss)+'R';let scale=Math.max(avgWin,avgLoss,1);
+ $('avgwinbar').style.width=Math.min(100,avgWin/scale*100)+'%';$('avglossbar').style.width=Math.min(100,avgLoss/scale*100)+'%';
+ $('pf').textContent=pf===Infinity?'∞':fmt(pf);$('pfbar').style.width=Math.min(100,pf===Infinity?100:pf/(pf+1)*100)+'%';
+ $('assessment').textContent=!sorted.length?'Tambahkan data untuk melihat ringkasan sistem.':net>0&&net/sorted.length>0?'Hasil sampel saat ini positif. Validasi lagi pada data/periode lain; 100 trade belum menjamin performa ke depan.':net===0?'Hasil sampel impas. Periksa RR aktual, biaya, dan aturan entry.':'Hasil sampel saat ini negatif. Tinjau trade satu per satu sebelum mengubah aturan.';
+ $('progressTag').textContent=`${trades.length} / 100 trade tercatat`;
+ let fR=$('filterResult').value,fS=$('filterSymbol').value;
+ const filtered=[...trades].sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created).filter(t=>(fR==='all'||t.result===fR)&&(fS==='all'||t.symbol===fS));
+ $('tradeRows').innerHTML=filtered.map(t=>{let r=calc(t),label=t.result==='win'?'WIN':t.result==='loss'?'LOSS':'BE';return `<tr><td>${trades.findIndex(x=>x.id===t.id)+1}</td><td>${t.date}</td><td>${esc(t.symbol)}</td><td>${esc(t.setup)} · ${esc(t.direction)}</td><td><span class="pill ${t.result}">${label}</span></td><td>${t.result==='win'?'1:'+fmt(t.rr):'—'}</td><td class="${r>0?'positive':r<0?'negative':''}">${r>0?'+':''}${fmt(r)}R</td><td title="${esc(t.notes)}">${esc((t.notes||'—').slice(0,28))}</td><td><button class="smallbtn" onclick="editTrade('${t.id}')">Edit</button> <button class="smallbtn danger" onclick="deleteTrade('${t.id}')">Hapus</button></td></tr>`}).join('');
+ $('empty').style.display=filtered.length?'none':'block';
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('tradeForm').addEventListener('submit',e=>{e.preventDefault();let result=$('result').value,rr=$('rr').value==='custom'?Number($('customRR').value):Number($('rr').value);if(result==='win'&&(!rr||rr<=0)){alert('Masukkan RR aktual yang valid.');return}
+ let t={id:editId||String(Date.now())+'_'+Math.random().toString(36).slice(2,7),created:editId?(trades.find(x=>x.id===editId)?.created||Date.now()):Date.now(),date:$('date').value,symbol:$('symbol').value,result,direction:$('direction').value,riskR:Number($('riskR').value),rr:result==='win'?rr:0,costR:Number($('costR').value)||0,setup:$('setup').value,session:$('session').value,notes:$('notes').value};
+ if(editId)trades=trades.map(x=>x.id===editId?t:x);else trades.push(t);resetForm();persist()});
+function resetForm(){editId=null;$('tradeForm').reset();$('date').value=new Date().toISOString().slice(0,10);$('riskR').value=1;$('rr').value='2';$('costR').value=0;$('customWrap').style.display='none';$('formTitle').textContent='＋ Catat trade baru';$('saveBtn').textContent='Simpan trade';$('cancelEdit').style.display='none';$('rr').disabled=false}
+window.editTrade=id=>{let t=trades.find(x=>x.id===id);if(!t)return;editId=id;['date','symbol','result','direction','riskR','costR','setup','session','notes'].forEach(k=>$(k).value=t[k]??'');let choices=['1','1.5','2','3','5','8'];$('rr').value=choices.includes(String(t.rr))?String(t.rr):'custom';$('customWrap').style.display=$('rr').value==='custom'?'flex':'none';$('customRR').value=t.rr;$('rr').disabled=t.result!=='win';$('formTitle').textContent='✎ Edit trade';$('saveBtn').textContent='Simpan perubahan';$('cancelEdit').style.display='block';window.scrollTo({top:0,behavior:'smooth'})};
+window.deleteTrade=id=>{if(confirm('Hapus trade ini? Tindakan ini tidak bisa dibatalkan.')){trades=trades.filter(t=>t.id!==id);if(editId===id)resetForm();persist()}};
+$('cancelEdit').onclick=resetForm;
+$('filterResult').onchange=render;$('filterSymbol').onchange=render;$('clearFilters').onclick=()=>{$('filterResult').value='all';$('filterSymbol').value='all';render()};
+function download(name,content,type){let blob=new Blob([content],{type}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
+$('exportBtn').onclick=()=>{let cols=['date','symbol','direction','setup','session','result','riskR','rr','costR','netR','notes'];let csv=[cols.join(','),...trades.map(t=>cols.map(k=>{let v=k==='netR'?calc(t):t[k]??'';return '"'+String(v).replace(/"/g,'""')+'"'}).join(','))].join('\r\n');download('edgelog-trades.csv','\ufeff'+csv,'text/csv;charset=utf-8')};
+$('backupBtn').onclick=()=>download('edgelog-backup.json',JSON.stringify({version:1,exportedAt:new Date().toISOString(),trades},null,2),'application/json');
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=async e=>{let file=e.target.files[0];if(!file)return;try{let d=JSON.parse(await file.text()),arr=Array.isArray(d)?d:d.trades;if(!Array.isArray(arr))throw Error('Format tidak cocok');if(confirm(`Impor ${arr.length} trade? Data akan digabung dengan jurnal saat ini. Trade dengan ID sama dilewati.`)){let ids=new Set(trades.map(t=>t.id));arr.forEach(t=>{if(t&&t.id&&!ids.has(t.id)){trades.push(t);ids.add(t.id)}});persist();alert('Impor selesai.')} }catch(err){alert('File backup tidak valid.')}e.target.value=''};
+render();
+</script>
+</body>
+</html>
